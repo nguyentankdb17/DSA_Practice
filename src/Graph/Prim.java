@@ -1,63 +1,53 @@
 package Graph;
 
+import UnionFind.UnionFind;
+
 import java.util.*;
 
 public class Prim {
-    static class Edge implements Comparable<Edge> {
-        int to, weight;
 
-        public Edge(int to, int weight) {
-            this.to = to;
-            this.weight = weight;
-        }
+    public static int prims(int V, List<List<Integer>> edges, int start) {
+        List<Integer> result = new ArrayList<>();
+        int totalWeight = 0;
 
-        @Override
-        public int compareTo(Edge other) {
-            return Integer.compare(this.weight, other.weight);
-        }
-    }
+        PriorityQueue<List<Integer>> pq = new PriorityQueue<>(Comparator.comparingInt(a -> a.get(1)));
+        boolean[] visited = new boolean[V + 1];
+        int[] weight = new int[V + 1];
 
-    public static int prims(int n, List<List<Edge>> edges, int start) {
-        PriorityQueue<Edge> pq = new PriorityQueue<>();
-        boolean[] visited = new boolean[n + 1];
-        int[] parent = new int[n + 1];
-        int[] weight = new int[n + 1];
+        Arrays.fill(weight, Integer.MAX_VALUE);
+        Arrays.fill(visited, false);
 
-        for (int i = 1; i <= n; i++) {
-            weight[i] = Integer.MAX_VALUE;
-            parent[i] = -1;
-            visited[i] = false;
-        }
-
-        pq.add(new Edge(start, 0));
+        pq.add(Arrays.asList(start, 0));
         weight[start] = 0;
 
-        while (!pq.isEmpty()) {
-            Edge current = pq.poll();
-            int currentNode = current.to;
+        UnionFind uf = new UnionFind(V+1);
+
+        int lastNode = start;
+
+        while (!pq.isEmpty() && result.size() <= V) {
+            List<Integer> current = pq.poll();
+            int currentNode = current.get(0);
+            int currentWeight = current.get(1);
 
             if (visited[currentNode]) {
                 continue;
             }
 
             visited[currentNode] = true;
+            totalWeight += currentWeight;
+            result.add(currentNode);
+            uf.union(currentNode, lastNode);
+            lastNode = currentNode;
 
-            for (Edge neighbor : edges.get(currentNode)) {
-                int nextNode = neighbor.to;
-                int edgeWeight = neighbor.weight;
+            List<Integer> neighbor = edges.get(currentNode);
+            for (int i = 0; i < neighbor.size(); i += 2) {
+                int nextNode = neighbor.get(i);
+                int edgeWeight = neighbor.get(i + 1);
 
-                if (!visited[nextNode] && edgeWeight < weight[nextNode]) {
+                if (!visited[nextNode] && edgeWeight < weight[nextNode] && !uf.isConnected(currentNode, nextNode)) {
                     weight[nextNode] = edgeWeight;
-                    parent[nextNode] = currentNode;
-                    pq.add(new Edge(nextNode, edgeWeight));
+                    pq.add(Arrays.asList(nextNode, weight[nextNode]));
                 }
-            }
-        }
-
-        int totalWeight = 0;
-        for (int i = 1; i <= n; i++) {
-            if (parent[i] != -1) {
-                totalWeight += weight[i];
             }
         }
 
@@ -65,27 +55,26 @@ public class Prim {
     }
 
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        int numberVertexs = sc.nextInt();
-        int numberEdges = sc.nextInt();
+        Scanner scan = new Scanner(System.in);
+        int V = scan.nextInt();
+        int E = scan.nextInt();
 
-        List<List<Edge>> graph = new ArrayList<>();
-
-        for (int i = 0; i <= numberVertexs; i++) {
-            graph.add(new ArrayList<Edge>());
-        }
-        int tmp = numberEdges;
-        while (tmp-- > 0) {
-            List<Integer> edgeList = new ArrayList<>();
-            int u = sc.nextInt();
-            int v = sc.nextInt();
-            int w = sc.nextInt();
-            graph.get(u).add(new Edge(v,w));
-            graph.get(v).add(new Edge(u,w));
+        List<List<Integer>> edges = new ArrayList<>();
+        for (int i = 0; i <= V; i++) {
+            edges.add(i, new ArrayList<Integer>());
         }
 
-        int start = sc.nextInt();
-        System.out.println(prims(numberVertexs, graph, start));
-        sc.close();
+        for (int i = 0; i < E; i++) {
+            int u = scan.nextInt();
+            int v = scan.nextInt();
+            int w = scan.nextInt();
+
+            edges.get(u).addAll(Arrays.asList(v, w));
+            edges.get(v).addAll(Arrays.asList(u, w));
+        }
+
+        int start = scan.nextInt();
+        System.out.println(prims(V, edges, start));
+        scan.close();
     }
 }

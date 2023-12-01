@@ -3,32 +3,20 @@ package Graph;
 import java.util.*;
 
 public class Dijkstra {
-    static class Edge implements Comparable<Edge> {
-        int to, weight;
-
-        public Edge(int to, int weight) {
-            this.to = to;
-            this.weight = weight;
-        }
-
-        @Override
-        public int compareTo(Edge other) {
-            return Integer.compare(this.weight, other.weight);
-        }
-    }
 
     public static List<Integer> shortestReach(int n, List<List<Integer>> edges, int start) {
-        PriorityQueue<Edge> pq = new PriorityQueue<>();
+
+        PriorityQueue<List<Integer>> pq = new PriorityQueue<>(Comparator.comparingInt(a -> a.get(1)));
         boolean[] visited = new boolean[n + 1];
         int[] distance = new int[n + 1];
         Arrays.fill(distance, Integer.MAX_VALUE);
 
-        pq.add(new Edge(start, 0));
+        pq.add(Arrays.asList(start, 0));
         distance[start] = 0;
 
         while (!pq.isEmpty()) {
-            Edge current = pq.poll();
-            int currentNode = current.to;
+            List<Integer> current = pq.poll();
+            int currentNode = current.get(0);
 
             if (visited[currentNode]) {
                 continue;
@@ -36,13 +24,14 @@ public class Dijkstra {
 
             visited[currentNode] = true;
 
-            for (Edge neighbor : edges.get(currentNode)) {
-                int nextNode = neighbor.to;
-                int edgeWeight = neighbor.weight;
+            List<Integer> neighbor = edges.get(currentNode);
+            for (int i = 0; i < neighbor.size(); i += 2) {
+                int nextNode = neighbor.get(i);
+                int edgeWeight = neighbor.get(i + 1);
 
                 if (!visited[nextNode] && distance[currentNode] + edgeWeight < distance[nextNode]) {
                     distance[nextNode] = distance[currentNode] + edgeWeight;
-                    pq.add(new Edge(nextNode, distance[nextNode]));
+                    pq.add(Arrays.asList(nextNode, distance[nextNode]));
                 }
             }
         }
@@ -64,36 +53,31 @@ public class Dijkstra {
         int cases = scan.nextInt();
 
         for (int k = 0; k < cases; k++) {
+            int V = scan.nextInt();
+            int E = scan.nextInt();
+
             List<List<Integer>> edges = new ArrayList<>();
-            int n = scan.nextInt();
-            int edge = scan.nextInt();
-            for (int i = 0; i < edge; i++) {
-                List<Integer> edge1 = new ArrayList<>();
-                List<Integer> edge2 = new ArrayList<>();
+            for (int i = 0; i <= V; i++) {
+                edges.add(i, new ArrayList<Integer>());
+            }
+
+            for (int i = 0; i < E; i++) {
                 int u = scan.nextInt();
                 int v = scan.nextInt();
                 int w = scan.nextInt();
 
-                edge1.add(u);
-                edge1.add(v);
-                edge1.add(w);
-                edges.add(edge1);
-
-                edge2.add(v);
-                edge2.add(u);
-                edge2.add(w);
-                edges.add(edge2);
+                edges.get(u).addAll(Arrays.asList(v, w));
+                edges.get(v).addAll(Arrays.asList(u, w));
             }
 
             int startNode = scan.nextInt();
 
-            List<Integer> distances = shortestReach(n, edges, startNode);
+            List<Integer> distances = shortestReach(V, edges, startNode);
 
-            for (int i = 0; i < n; i++) {
+            for (int i = 0; i < V; i++) {
                 if (distances.get(i) == 0)
                     continue;
                 System.out.print(distances.get(i) + " ");
-
             }
             System.out.println();
         }

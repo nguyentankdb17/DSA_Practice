@@ -43,12 +43,9 @@ public class Kruskals {
         List<Integer> gWeight = new ArrayList<>();
 
         for (int i = 0; i < gEdges; i++) {
-            int u = sc.nextInt();
-            int v = sc.nextInt();
-            int w = sc.nextInt();
-            gFrom.add(u);
-            gTo.add(v);
-            gWeight.add(w);
+            gFrom.add(sc.nextInt());
+            gTo.add(sc.nextInt());
+            gWeight.add(sc.nextInt());
         }
 
         int res = kruskals(gNodes, gFrom, gTo, gWeight);
