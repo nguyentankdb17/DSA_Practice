@@ -1,4 +1,4 @@
-package UnionFind;
+package DSU;
 
 public class UnionFind {
     private int[] parent;

@@ -1,6 +1,6 @@
 package Graph;
 
-import UnionFind.UnionFind;
+import DSU.UnionFind;
 
 import java.util.*;
 
@@ -50,7 +50,6 @@ public class Prim {
                 }
             }
         }
-
         return totalWeight;
     }
 

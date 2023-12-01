@@ -1,6 +1,6 @@
 package Graph;
 
-import UnionFind.UnionFind;
+import DSU.UnionFind;
 
 import java.util.*;
 
