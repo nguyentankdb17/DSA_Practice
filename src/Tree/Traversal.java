@@ -9,7 +9,7 @@ public class Traversal {
 
     public static List<Integer> preOrder(Node root)
     {
-        if(root == null) {
+        if (root == null) {
             return new ArrayList<>();
         }
 

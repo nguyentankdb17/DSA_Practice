@@ -1,6 +1,6 @@
 package Graph;
 
-import DSU.UnionFind;
+import UnionFind.DSU;
 
 import java.util.*;
 
@@ -20,7 +20,7 @@ public class Prim {
         pq.add(Arrays.asList(start, 0));
         weight[start] = 0;
 
-        UnionFind uf = new UnionFind(V+1);
+        DSU uf = new DSU(V+1);
 
         int lastNode = start;
 

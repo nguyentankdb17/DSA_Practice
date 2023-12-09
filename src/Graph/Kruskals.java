@@ -1,6 +1,6 @@
 package Graph;
 
-import DSU.UnionFind;
+import UnionFind.DSU;
 
 import java.util.*;
 
@@ -18,7 +18,7 @@ public class Kruskals {
             pq.add(edge);
         }
 
-        UnionFind uf = new UnionFind(pq.size());
+        DSU uf = new DSU(pq.size());
         int edgeAdded = 0;
         int result = 0;
 
