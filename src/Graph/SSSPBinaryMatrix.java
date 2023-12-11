@@ -2,69 +2,80 @@ package Graph;
 import java.util.*;
 
 public class SSSPBinaryMatrix {
-    // A Java program to find the shortest path in a maze using DFS algorithm
-    private static int shortestPath;
+    static int[] dr = {-1, 0, 1, 0};
+    static int[] dc = {0, 1, 0, -1};
 
-    // Method to find the shortest path in a given maze
-    public static int findShortestPath(int[][] maze, int X, int Y) {
-
-        // Check if the maze is empty or null, if so return 0
-        if (maze == null || maze.length == 0 || maze[0].length == 0) {
-            return 0;
-        }
-
-        // Initialize shortestPath to the maximum possible value
-        shortestPath = Integer.MAX_VALUE;
-
-        // Initialize a boolean array to keep track of visited cells
-        boolean[][] visited = new boolean[maze.length][maze[0].length];
-
-        // Invoke the dfs() method to find the shortest path
-        dfs(X+1, Y+1, maze, visited, 0, 0, 0);
-
-        // Return the shortest path, or 0 if it was not found
-        return shortestPath == Integer.MAX_VALUE ? 0 : shortestPath;
+    static int shortestPath(int[][] grid, int[] source, int[] destination) {
+        if (source[0]==destination[0] && source[1]==destination[1]) return 0;
+        int[][] path = bfs(grid,source[0],source[1]);
+        int res = path[destination[0]][destination[1]]-1;
+        if (res==0) return -1;
+        return res;
     }
 
-    // Method to perform DFS traversal to find the shortest path
-    private static void dfs(int N, int M,int[][] maze, boolean[][] visited, int row, int col, int distance) {
 
-        // Check if the current cell is out of bounds, a wall or has already been visited
-        if (row < 0 || row >= N || col < 0 || col >= M || maze[row][col] == 0 || visited[row][col]) {
-            return;
+    static int[][] bfs(int[][] grid, int startRow, int startCol) {
+        int rows = grid.length;
+        int cols = grid[0].length;
+
+        int[][] res = new int[rows][cols];
+        boolean[][] visited = new boolean[rows][cols];
+        for (boolean[] arr : visited) {
+            Arrays.fill(arr,false);
         }
 
-        // Check if the current cell is the destination, if so update the shortestPath variable and return
-        if (row == N-1 && col == M-1) {
-            shortestPath = Math.min(shortestPath, distance);
-            return;
+        Queue<Integer> rowQueue = new LinkedList<>();
+        Queue<Integer> colQueue = new LinkedList<>();
+
+        visited[startRow][startCol] = true;
+        res[startRow][startCol] = 1;
+
+        rowQueue.add(startRow);
+        colQueue.add(startCol);
+
+        while (!rowQueue.isEmpty()) {
+            int currRow = rowQueue.poll();
+            int currCol = colQueue.poll();
+
+            for (int i=0 ;i < 4;i++) {
+                int newRow = currRow + dr[i];
+                int newCol = currCol + dc[i];
+
+                if (newRow >=0 && newRow < rows && newCol >= 0 && newCol < cols && !visited[newRow][newCol]) {
+                    visited[newRow][newCol] = true;
+                    if (grid[newRow][newCol]==0) {
+                        res[newRow][newCol] = 0;
+                        continue;
+                    }
+                    res[newRow][newCol] = res[currRow][currCol] + 1;
+                    rowQueue.add(newRow);
+                    colQueue.add(newCol);
+                }
+            }
         }
-
-        // Mark the current cell as visited
-        visited[row][col] = true;
-
-        // Explore all possible paths from the current cell
-        dfs(N, M, maze, visited, row + 1, col, distance + 1);
-        dfs(N, M, maze, visited, row - 1, col, distance + 1);
-        dfs(N, M, maze, visited, row, col + 1, distance + 1);
-        dfs(N, M, maze, visited, row, col - 1, distance + 1);
-
-        // Unmark the current cell as visited
-        visited[row][col] = false;
+        for (int i=0;i<rows;i++) {
+            for (int j=0;j<cols;j++) {
+                System.out.print(res[i][j] + " ");
+            }
+            System.out.println();
+        }
+        return res;
     }
 
     // Main method to test the code
     public static void main(String[] args) {
 
         // Initialize a 2D array to represent the maze
-        int[][] maze = {
-                {1, 1, 1, 1},
-                {0, 0, 0, 1},
-                {0, 0, 0, 1},
-        };
+        int grid[][] = {{1, 1, 1, 1, 1},
+            {1, 1, 1, 1, 1},
+            {1, 1, 1, 1, 0},
+            {1, 0, 1, 0, 1}};
+
+        int[] source = {0,0};
+        int[] destination = {3,4};
 
         // Find the shortest path in the maze using DFS and print it
-        int shortest = findShortestPath(maze,0,3);
+        int shortest = shortestPath(grid, source, destination);
         System.out.println("Shortest Path using DFS: " + shortest);
     }
 }

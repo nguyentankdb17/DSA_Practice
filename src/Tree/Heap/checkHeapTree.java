@@ -10,7 +10,7 @@ public class checkHeapTree {
         if (tree.left==null && tree.right!=null) return false;
         if (tree.left!=null && numChild(tree.left)==0 && tree.right==null) return true;
         if (tree.left!=null && tree.right==null) return false;
-        if (numChild(tree.left)<2 && numChild(tree.right)>0) return false;
+        if (numChild(tree.left) < 2 && numChild(tree.right) > 0) return false;
         if ((tree.left != null && tree.left.data > tree.data) ||
                 (tree.right != null && tree.right.data > tree.data)) {
             return false;

@@ -10,7 +10,7 @@ public class HeapSort {
         }
     }
 
-    static void heapify(int[] arr, int n, int i)
+    public static void heapify(int[] arr, int n, int i)
     {
         // Your code here
         int left = 2*i+1;
